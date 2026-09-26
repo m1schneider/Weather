@@ -1,0 +1,1 @@
+This project compares the precipitation in Seattle, WA and Philadelphia, PA from January 1st, 2018 to December 31st, 2022.
