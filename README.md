@@ -30,7 +30,10 @@ https://www.ncei.noaa.gov/cdo-web/
 ---
 
 ## Analysis
-The data for this project was gathered by NOAA, however, it had to be appropriately cleaned and organized for analysis. The data that we used was the precipitation data gathered by the two weather stations, and the data was stripped of non-relevant data and reorganized into a long format. This data was then visualized and aggregated to find underlying patterns regarding the precipitation data in terms of rainfall per year and the proportion of days with rainfall. On days of the year where rainfall data was missing, the mean rainfall was added in its place.
+The data for this project was gathered by NOAA, however, it had to be appropriately cleaned and organized for analysis. The data that we used was the precipitation data gathered by the two weather stations, and the data was stripped of non-relevant data and reorganized into a long format. This data was then exported an saved under the 'data' folder, and named 'clean_seattle_PHL_weather.csv'.
+
+
+This cleaned data was then visualized and aggregated to find underlying patterns regarding the precipitation data in terms of rainfall per year and the proportion of days with rainfall. On days of the year where rainfall data was missing, the mean rainfall was added in its place.
 
 
 The following is a section of the groupby statement that was able to return data on which cities where receiving more rainfall and at what times of the year. The first statement returns the average daily rainfall for both Seattle and Philadelphia, and the seconf statement return the average daily rainfall by month. The monthly breakdown allows us to see the annual trends that both cities experience and how they vary from one another.
