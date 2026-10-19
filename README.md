@@ -84,8 +84,3 @@ In terms of mean annual rainfall, Philadelphia averaged 18.5% more rain througho
 ---
 ## Author
 Michael Schneider
-
-
----
-## License
-This repository contains coursework for DATA 5100 at Seattle University. It is shared for portfolio and reference purposes only. Please do not copy or submit it as your own work for academic credit.
