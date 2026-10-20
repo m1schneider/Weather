@@ -2,7 +2,7 @@
 
 ## Overview
 
-The purpose of this project is to analyze rainfall data for Seattle and Philadelphia to answer the following questions: Which city receives more rainfall per year, and which city has a higher proportion of rainy days per year?
+This project compares rainfall data from Seattle and Philadelphia to determine which city receives more rainfall annually and experiences a greater proportion of rainy days throughout the year. The null hypotheses are that the mean daily rainfall and the proportion of rainy days are equal between the two cities.
 
 ---
 ## Data
@@ -74,11 +74,119 @@ plt.tick_params(labelsize=15)
 plt.show()
 ```
 
+An independent-samples t-test was conducted for each month to determine which months showed a statistically significant difference in mean daily rainfall at the 0.05 significance level. It was determined that the difference in mean daily rainfall was statistically significant in 8 out of 12 months, the code used to perform this analysis is provided below.
+
+```python
+from scipy import stats
+
+significance_level = 0.05
+significantly_different = np.zeros(12)
+
+results = []
+
+#perform a t-test for each month
+for month in range (1,13):
+    #Get precipitation data for Seattle and St.Louis for the current month
+    sea_data = df.loc[(df['city'] == 'SEA') & (df['month'] == month), 'precipitation'   ]
+    phl_data = df.loc[(df['city'] == 'PHL') & (df['month'] == month), 'precipitation'   ]
+
+    #Equal variance = false, indicated we are using Welch's T-Test
+    t_statistic, p_value = stats.ttest_ind(sea_data, phl_data, equal_var=False)
+
+    # Record whether the difference is statistically significant
+    significant = p_value < significance_level
+
+    if significant:
+        significantly_different[month - 1] = 1
+
+    # Save results for the table
+    results.append({
+        'Month': month,
+        't-statistic': t_statistic,
+        'p-value': p_value,
+        'Significant?': 'True' if significant else 'False'
+    })
+```
+
+
+
+A two proportion z-test was conducted for each month to determine which months showed a statistically significant difference in their proportion of rainy days at the 0.05 significance level. It was determined that the difference in mean daily rainfall was statistically significant in 8 out of 12 months, the code used to perform this analysis is provided below.
+
+
+```python
+
+import numpy as np
+import pandas as pd
+from statsmodels.stats.proportion import proportions_ztest
+
+significance_level = 0.05
+significantly_different_proportion = np.zeros(12)
+
+results_proportion = []
+
+# Perform a z-test for each month
+for month in range(1, 13):
+
+    # Create a contingency table for Seattle and Philadelphia
+    contingency_table = pd.crosstab(
+        df.loc[df['month'] == month, 'city'],
+        df.loc[df['month'] == month, 'any_precipitation']
+    )
+
+    # Ensure both Boolean columns exist
+    contingency_table = contingency_table.reindex(
+        columns=[False, True],
+        fill_value=0
+    )
+
+    # Calculate days with precipitation for each city
+    days_with_precipitation = contingency_table[True]
+
+    # Calculate total days for each city
+    total_counts = contingency_table.sum(axis=1)
+
+    # Perform the hypothesis test
+    zstat, p_value = proportions_ztest(
+        count=days_with_precipitation.to_numpy(),
+        nobs=total_counts.to_numpy(),
+        alternative='two-sided'
+    )
+
+    # Record whether the proportions are significantly different
+    significantly_different_proportion[month - 1] = (
+        p_value < significance_level
+    )
+
+    # Store the results
+    results_proportion.append({
+        'Month': month,
+        'Z-statistic': zstat,
+        'P-value': p_value,
+        'Significantly Different': p_value < significance_level
+    })
+
+# Convert results to a DataFrame
+results_proportion = pd.DataFrame(results_proportion)
+
+# Display a formatted table
+results_proportion.style.format({
+    'Z-statistic': '{:.2f}',
+    'P-value': '{:.3e}'
+});
+
+```
 
 ---
 ## Results
-Seattle and Philadelphia were the focus locations of this project, and the key questions that were answered were which city sees more annual rainfall in terms of inches and which city sees a higher proportion of rainy days throughout the year.
-In terms of mean annual rainfall, Philadelphia averaged 18.5% more rain throughout the year. In terms of the proportion of days with rain, on the other hand, Seattle averaged 52.4% more days with rain throughout the year when compared to Philadelphia. These figures are yearly averages, and monthly totals varied considerably.
+Seattle and Philadelphia were the focus locations of this project, and the key questions that were answered were which city has a higher mean daily rainfall in terms of inches and which city sees a higher proportion of rainy days throughout the year. We also presented a null hypothesis that both cities have the same daily mean rainfall, and that both cities have the same proportion of rainy days throughout the year. 
+  
+In terms of mean annual rainfall, Philadelphia averaged 18.5% more rain throughout the year. In terms of the proportion of days with rain, on the other hand, Seattle averaged 52.4% more days with rain throughout the year compared to Philadelphia. These were yearly averages, and there was a lot of variety each month of the year.  
+
+When we looked at the monthly patterns in the data, the difference in mean daily rainfall was statistically significant in 8 out of 12 months. The only months that were not statistically significant were February, March, April, and October. This allowed us to reject our null hypothesis that the average daily rainfall in Seattle and Philadelphia was equal for 8 out of 12 months.
+
+When we looked at the monthly patterns in the proportion of rainy days, the difference in the proportions of rainy days was statistically significant in 8 out of 12 months. The months that were not statistically significant were May, June, August, and September. This allowed us to reject our null hypothesis that the proportions of rainy days were equal in Seattle and Philadelphia for 8 out of the 12 months of the year.
+
+This study focused on analyzing precipitation data in Philadelphia and Seattle. However, a limitation of the study is that our data covered only a 5-year period. This may be insufficient to predict future weather patterns, as well as to generalize historical weather patterns. That being said, this study was able to reject our null hypotheses that the mean daily rainfall and the proportion of rainy days were equal in both cities in 8 out of the 12 months.
 
 
 ---
